@@ -1,0 +1,269 @@
+{%- comment -%} LeagueMugs bespoke cart + recommendations. Self-contained, matches lm-home design system. ASCII-only (HTML entities for glyphs) to keep themeFilesUpsert TEXT clean. {%- endcomment -%}
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+.lmc{--ob:#0D0D0D;--gold:#C9A84C;--goldh:#D8B85A;--goldd:#B0913A;--off:#FAFAFA;--cream:#F5F0E8;--mid:#1A1A2E;
+  --tarn:#8B6A3A;--ink:#18181B;--ink3:#71717A;--hair:rgba(255,255,255,.10);--red:#E8432A;
+  --disp:"Barlow Condensed",Impact,sans-serif;--body:"Inter",-apple-system,system-ui,sans-serif;}
+.lmc *{box-sizing:border-box;margin:0}
+.lmc{font-family:var(--body);color:#fff;line-height:1.65;background:linear-gradient(180deg,#141425 0%,#0D0D0D 38%);}
+.lmc .bleed{position:relative;left:50%;right:50%;width:100vw;max-width:100vw;margin-left:-50vw;margin-right:-50vw}
+.lmc .wrap{max-width:1240px;margin:0 auto;padding:54px 40px 80px}
+.lmc .ey{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.lmc .rule{display:block;width:64px;height:2px;background:var(--gold);border:0;margin:14px 0 0}
+.lmc h1.t{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1.0;font-size:48px;color:#fff;margin-top:18px}
+.lmc h1.t .ct{color:var(--gold);font-size:.6em;vertical-align:middle;margin-left:8px}
+
+.lmc .grid{display:grid;grid-template-columns:1fr 380px;gap:40px;align-items:start;margin-top:42px}
+
+/* LINE ITEMS */
+.lmc .items{list-style:none;padding:0}
+.lmc .li{display:grid;grid-template-columns:96px 1fr auto;gap:22px;align-items:center;padding:24px 0;border-bottom:1px solid var(--hair)}
+.lmc .li:first-child{border-top:1px solid var(--hair)}
+.lmc .li .thumb{width:96px;height:96px;border-radius:10px;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lmc .li .thumb img{width:86%;height:86%;object-fit:contain}
+.lmc .li .info .nm{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:20px;line-height:1.05;color:#fff;text-decoration:none;display:inline-block}
+.lmc .li .info .nm:hover{color:var(--gold)}
+.lmc .li .info .vr{font-family:var(--body);font-size:12px;letter-spacing:.04em;color:rgba(255,255,255,.55);margin-top:5px}
+.lmc .li .info .prop{font-family:var(--body);font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
+.lmc .li .info .prop b{color:var(--gold);font-weight:600}
+.lmc .li .ctl{display:flex;align-items:center;gap:18px;margin-top:12px}
+.lmc .qty{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.22);border-radius:6px;overflow:hidden}
+.lmc .qty button{width:34px;height:34px;background:transparent;border:0;color:#fff;font-size:18px;font-family:var(--disp);cursor:pointer;transition:.15s;line-height:1}
+.lmc .qty button:hover{background:rgba(201,168,76,.18);color:var(--gold)}
+.lmc .qty input{width:40px;height:34px;text-align:center;background:transparent;border:0;color:#fff;font-family:var(--disp);font-weight:700;font-size:16px;-moz-appearance:textfield}
+.lmc .qty input::-webkit-outer-spin-button,.lmc .qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.lmc .rm{background:none;border:0;color:rgba(255,255,255,.45);font-family:var(--body);font-size:12px;letter-spacing:.04em;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0;transition:.15s}
+.lmc .rm:hover{color:var(--red)}
+.lmc .li .price{font-family:var(--disp);font-weight:800;font-size:22px;color:#fff;text-align:right;white-space:nowrap}
+.lmc .li .price .unit{display:block;font-family:var(--body);font-weight:500;font-size:11px;color:rgba(255,255,255,.5);text-decoration:none}
+
+/* SUMMARY CARD */
+.lmc .sum{background:linear-gradient(160deg,#1A1A2E,#0D0D0D);border:1px solid rgba(201,168,76,.28);border-radius:14px;padding:28px;position:sticky;top:24px}
+.lmc .sum .hd{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:22px;color:#fff}
+.lmc .sum .srule{height:2px;width:48px;background:var(--gold);margin:12px 0 22px}
+.lmc .ship{margin-bottom:22px}
+.lmc .ship .msg{font-family:var(--body);font-size:13px;color:rgba(255,255,255,.8);margin-bottom:10px}
+.lmc .ship .msg b{color:var(--gold);font-weight:700}
+.lmc .ship .msg .won{color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-family:var(--disp);font-size:15px}
+.lmc .bar{height:7px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+.lmc .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--goldh));border-radius:4px;transition:width .4s cubic-bezier(.2,.7,.2,1)}
+.lmc .row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;font-family:var(--body);font-size:14px;color:rgba(255,255,255,.7)}
+.lmc .row.tot{border-top:1px solid var(--hair);margin-top:6px;padding-top:18px}
+.lmc .row.tot .lbl{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:18px;color:#fff}
+.lmc .row.tot .val{font-family:var(--disp);font-weight:800;font-size:28px;color:var(--gold)}
+.lmc .row .val{color:#fff;font-weight:600}
+.lmc .fine{font-family:var(--body);font-size:11.5px;color:rgba(255,255,255,.5);margin:6px 0 20px;line-height:1.5}
+.lmc .co{display:block;width:100%;border:0;cursor:pointer;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.09em;
+  font-size:18px;padding:17px;border-radius:6px;background:var(--gold);color:var(--ob);box-shadow:0 8px 28px rgba(201,168,76,.35);transition:.18s}
+.lmc .co:hover{background:var(--goldh)}.lmc .co:active{background:var(--goldd)}
+.lmc .alt{margin-top:14px}
+.lmc .alt > *{margin-top:10px}
+.lmc .dvd{display:flex;align-items:center;gap:14px;margin:18px 0 4px;color:rgba(255,255,255,.4);font-family:var(--body);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.lmc .dvd::before,.lmc .dvd::after{content:"";flex:1;height:1px;background:var(--hair)}
+.lmc .cont{display:block;text-align:center;margin-top:18px;color:rgba(255,255,255,.6);font-family:var(--body);font-size:13px;text-decoration:none;transition:.15s}
+.lmc .cont:hover{color:var(--gold)}
+.lmc .perks{margin-top:20px;padding-top:18px;border-top:1px solid var(--hair);display:flex;flex-direction:column;gap:9px}
+.lmc .perks span{font-family:var(--body);font-size:12px;letter-spacing:.02em;color:rgba(255,255,255,.62)}
+.lmc .perks span::before{content:"\25C6";color:var(--gold);font-size:8px;margin-right:9px;vertical-align:middle}
+
+/* EMPTY */
+.lmc .empty{text-align:center;padding:30px 0 20px;max-width:560px;margin:0 auto}
+.lmc .empty img{width:200px;height:auto;margin:0 auto 6px;filter:drop-shadow(0 18px 34px rgba(0,0,0,.55))}
+.lmc .empty h2{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:36px;color:#fff;margin-top:8px}
+.lmc .empty p{color:rgba(255,255,255,.7);font-size:15px;margin:14px auto 26px;max-width:420px}
+.lmc .btn-gold{display:inline-block;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:15px;padding:15px 30px;border-radius:6px;text-decoration:none;background:var(--gold);color:var(--ob);box-shadow:0 8px 28px rgba(201,168,76,.35);transition:.18s}
+.lmc .btn-gold:hover{background:var(--goldh)}
+.lmc .btn-out{display:inline-block;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:15px;padding:15px 30px;border-radius:6px;text-decoration:none;border:1.5px solid rgba(255,255,255,.35);color:#fff;transition:.18s;margin-left:12px}
+.lmc .btn-out:hover{border-color:var(--gold);color:var(--gold)}
+
+/* RECOMMENDATIONS */
+.lmc .recs{margin-top:72px}
+.lmc .recs .rhd{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;border-bottom:1px solid var(--hair);padding-bottom:20px}
+.lmc .recs .rhd h2{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:30px;color:#fff;line-height:1}
+.lmc .recs .rhd a.va{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid transparent;transition:.15s}
+.lmc .recs .rhd a.va:hover{border-color:var(--gold)}
+.lmc .rgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px;margin-top:30px}
+.lmc .rcard{background:#fff;min-width:0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;transition:.2s;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.lmc .rcard:hover{transform:translateY(-4px);box-shadow:0 16px 38px rgba(0,0,0,.45)}
+.lmc .rcard .ph{position:relative;aspect-ratio:1/1;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lmc .rcard .ph img{width:84%;height:84%;object-fit:contain;transition:.25s}
+.lmc .rcard:hover .ph img{transform:scale(1.04)}
+.lmc .rcard .meta{padding:15px 16px 19px}
+.lmc .rcard .cat{font-family:var(--body);font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.lmc .rcard .pt{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:18px;margin:6px 0 9px;line-height:1.05;color:var(--ink)}
+.lmc .rcard .pr{font-family:var(--disp);font-weight:800;font-size:21px;color:var(--ink)}
+
+@media(max-width:980px){.lmc .grid{grid-template-columns:1fr}.lmc .sum{position:static}.lmc .rgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){
+  .lmc .wrap{padding:38px 20px 64px}.lmc h1.t{font-size:36px}
+  .lmc .li{grid-template-columns:72px 1fr;gap:16px}
+  .lmc .li .thumb{width:72px;height:72px}
+  .lmc .li .price{grid-column:2;text-align:left;font-size:19px;margin-top:4px}
+  .lmc .rgrid{grid-template-columns:1fr 1fr;gap:16px}
+  .lmc .recs .rhd h2{font-size:24px}
+}
+</style>
+
+{%- assign threshold = 5000 -%}
+{%- assign remaining = threshold | minus: cart.total_price -%}
+{%- assign pct = cart.total_price | times: 100 | divided_by: threshold -%}
+{%- if pct > 100 -%}{%- assign pct = 100 -%}{%- endif -%}
+
+<div class="lmc bleed"><div class="wrap">
+
+  <header>
+    <span class="ey">Your League. Your Legacy.</span>
+    <h1 class="t">Your Trophy Haul{%- if cart.item_count > 0 -%}<span class="ct">{{ cart.item_count }}</span>{%- endif -%}</h1>
+    <span class="rule"></span>
+  </header>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="empty">
+      <img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/crown_11_left.png?v=1782170597" alt="Empty cart">
+      <h2>The Trophy Case Is Empty</h2>
+      <p>No mugs, no bragging rights. Go claim some hardware for your league before draft day sneaks up on you.</p>
+      <a class="btn-gold" href="/collections/champions">Shop Champions</a>
+      <a class="btn-out" href="/collections/the-sacko">Shop The Roast</a>
+    </div>
+  {%- else -%}
+
+  <form action="{{ routes.cart_url }}" method="post" id="lm-cart-form" novalidate>
+    <div class="grid">
+
+      <ul class="items" id="lm-items">
+        {%- for item in cart.items -%}
+        <li class="li" data-key="{{ item.key }}">
+          <a class="thumb" href="{{ item.url }}">
+            {%- if item.image -%}<img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}" loading="lazy">{%- endif -%}
+          </a>
+          <div class="info">
+            <a class="nm" href="{{ item.url }}">{{ item.product.title }}</a>
+            {%- unless item.variant.title contains "Default" -%}<div class="vr">{{ item.variant.title }}</div>{%- endunless -%}
+            {%- for p in item.properties -%}
+              {%- unless p.last == blank or p.first contains '_' -%}<div class="prop"><b>{{ p.first }}:</b> {{ p.last }}</div>{%- endunless -%}
+            {%- endfor -%}
+            <div class="ctl">
+              <div class="qty">
+                <button type="button" class="dec" aria-label="Decrease quantity">&minus;</button>
+                <input type="text" inputmode="numeric" class="qv" value="{{ item.quantity }}" data-key="{{ item.key }}" aria-label="Quantity">
+                <button type="button" class="inc" aria-label="Increase quantity">&plus;</button>
+              </div>
+              <button type="button" class="rm" data-key="{{ item.key }}">Remove</button>
+            </div>
+          </div>
+          <div class="price">
+            {{ item.final_line_price | money }}
+            {%- if item.quantity > 1 -%}<span class="unit">{{ item.final_price | money }} each</span>{%- endif -%}
+          </div>
+        </li>
+        {%- endfor -%}
+      </ul>
+
+      <aside class="sum">
+        <div class="hd">Order Summary</div>
+        <div class="srule"></div>
+
+        <div class="ship">
+          <div class="msg" id="lm-ship">
+            {%- if remaining > 0 -%}
+              You&rsquo;re <b>{{ remaining | money }}</b> away from <b>free U.S. shipping</b>.
+            {%- else -%}
+              <span class="won">&#127942; Free U.S. shipping unlocked</span>
+            {%- endif -%}
+          </div>
+          <div class="bar"><i id="lm-bar" style="width:{{ pct }}%"></i></div>
+        </div>
+
+        <div class="row"><span>Subtotal</span><span class="val" id="lm-subtotal">{{ cart.total_price | money }}</span></div>
+        <div class="row"><span>Shipping</span><span class="val">Calculated at checkout</span></div>
+        <div class="row tot"><span class="lbl">Total</span><span class="val" id="lm-total">{{ cart.total_price | money }}</span></div>
+        <div class="fine">Taxes and shipping calculated at checkout. Personalization is confirmed by proof before we print.</div>
+
+        <button type="submit" name="checkout" class="co">Check Out</button>
+
+        {%- if additional_checkout_buttons -%}
+          <div class="dvd">or</div>
+          <div class="alt">{{ content_for_additional_checkout_buttons }}</div>
+        {%- endif -%}
+
+        <a class="cont" href="/collections/all">&larr; Continue Shopping</a>
+
+        <div class="perks">
+          <span>Made to order, just for your league</span>
+          <span>Original designs, never generic clip art</span>
+          <span>Dishwasher &amp; microwave safe</span>
+        </div>
+      </aside>
+
+    </div>
+  </form>
+
+  {%- comment -%} RECOMMENDATIONS {%- endcomment -%}
+  {%- assign cart_ids = "" -%}
+  {%- for item in cart.items -%}{%- assign cart_ids = cart_ids | append: item.product_id | append: "," -%}{%- endfor -%}
+  {%- assign rec_collection = collections['champions'] -%}
+  {%- if rec_collection.products_count == 0 -%}{%- assign rec_collection = collections.all -%}{%- endif -%}
+  <section class="recs">
+    <div class="rhd">
+      <h2>Outfit the Rest of the League</h2>
+      <a class="va" href="/collections/all">View All &rarr;</a>
+    </div>
+    <div class="rgrid">
+      {%- assign shown = 0 -%}
+      {%- for product in rec_collection.products -%}
+        {%- assign pid = product.id | append: "," -%}
+        {%- unless cart_ids contains pid -%}
+          {%- if shown < 4 -%}
+          <a class="rcard" href="{{ product.url }}">
+            <div class="ph">
+              {%- if product.featured_image -%}<img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" loading="lazy">{%- endif -%}
+            </div>
+            <div class="meta">
+              <div class="cat">{{ product.metafields.custom.category | default: product.type | default: 'League Mugs' }}</div>
+              <div class="pt">{{ product.title | remove: ' Mug' }}</div>
+              <div class="pr">{{ product.price | money }}</div>
+            </div>
+          </a>
+          {%- assign shown = shown | plus: 1 -%}
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </section>
+
+  {%- endif -%}
+
+</div></div>
+
+<script>
+(function(){
+  var root=document.getElementById('lm-cart-form');
+  if(!root) return;
+  function change(key,qty){
+    fetch('/cart/change.js',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({id:key,quantity:qty})})
+      .then(function(r){return r.json();})
+      .then(function(){window.location.reload();})
+      .catch(function(){window.location.reload();});
+  }
+  root.addEventListener('click',function(e){
+    var li=e.target.closest('.li');
+    if(e.target.classList.contains('inc')){var inp=li.querySelector('.qv');change(li.dataset.key,(parseInt(inp.value,10)||0)+1);}
+    if(e.target.classList.contains('dec')){var inp2=li.querySelector('.qv');change(li.dataset.key,Math.max(0,(parseInt(inp2.value,10)||0)-1));}
+    if(e.target.classList.contains('rm')){change(li.dataset.key,0);}
+  });
+  root.addEventListener('change',function(e){
+    if(e.target.classList.contains('qv')){
+      var li=e.target.closest('.li');var v=Math.max(0,parseInt(e.target.value,10)||0);change(li.dataset.key,v);
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "LeagueMugs Cart",
+  "settings": [],
+  "presets": [{ "name": "LeagueMugs Cart" }]
+}
+{% endschema %}
