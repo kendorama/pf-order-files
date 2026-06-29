@@ -1,0 +1,418 @@
+{%- comment -%} LeagueMugs bespoke homepage v12 — design-packet improvements. Self-contained. {%- endcomment -%}
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+.lmx{--ob:#0D0D0D;--gold:#C9A84C;--goldh:#D8B85A;--off:#FAFAFA;--cream:#F5F0E8;--mid:#1A1A2E;
+  --decay:#2E1E10;--tarn:#8B6A3A;--ink:#18181B;--ink2:#3F3F46;--ink3:#71717A;--hair:#E4E4E7;--red:#E8432A;--green:#2a4a2a;
+  --disp:"Barlow Condensed",Impact,sans-serif;--body:"Inter",-apple-system,system-ui,sans-serif;}
+.lmx *{box-sizing:border-box;margin:0}
+.lmx{font-family:var(--body);color:var(--ink);line-height:1.65}
+.lmx .bleed{position:relative;left:50%;right:50%;width:100vw;max-width:100vw;margin-left:-50vw;margin-right:-50vw}
+.lmx .wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.lmx .ey{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.lmx .rule{display:block;width:60px;height:2px;background:var(--gold);border:0;margin:14px 0 18px}
+.lmx .rule.c{margin-left:auto;margin-right:auto}
+.lmx h2.t{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1.0;font-size:42px;color:inherit}
+.lmx .sub{font-family:var(--body);font-size:15px;color:var(--ink3);margin-top:12px;max-width:620px}
+.lmx .btn{display:inline-block;font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  font-size:15px;padding:15px 28px;border-radius:6px;text-decoration:none;transition:.18s;cursor:pointer}
+.lmx .btn-gold{background:var(--gold);color:var(--ob);box-shadow:0 8px 28px rgba(201,168,76,.35)}
+.lmx .btn-gold:hover{background:var(--goldh)}
+.lmx .btn-out{border:1.5px solid rgba(255,255,255,.35);color:#fff}
+.lmx .btn-out:hover{border-color:var(--gold);color:var(--gold)}
+.lmx .btn-tarn{background:var(--tarn);color:var(--cream)}
+.lmx .btn-tarn:hover{background:#9D7A45}
+
+/* HERO */
+.lmx .hero{background:linear-gradient(155deg,#1A1A2E 0%,#141425 45%,#0D0D0D 100%)}
+.lmx .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:88px 40px}
+.lmx .hero h1{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:.96;font-size:74px;color:#fff}
+.lmx .hero h1 .g{color:var(--gold)}
+.lmx .hero p{font-size:17px;color:rgba(255,255,255,.74);margin-top:8px;max-width:440px}
+.lmx .hero .cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.lmx .hero .fig{display:flex;justify-content:center}
+.lmx .hero .fig img{max-width:100%;height:auto;filter:drop-shadow(0 26px 50px rgba(0,0,0,.6))}
+.lmx .hero-context{display:inline-flex;align-items:center;gap:10px;margin-bottom:18px;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:4px;padding:6px 12px}
+.lmx .hero-context .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.8s ease-in-out infinite}
+.lmx .hero-context span{font-family:var(--disp);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* TRUST */
+.lmx .trust{background:var(--cream)}
+.lmx .trust .wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 34px;padding:18px 40px}
+.lmx .trust span{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.lmx .trust span::before{content:"\25C6";color:var(--gold);margin-right:10px;font-size:9px;vertical-align:middle}
+
+/* TICKER */
+.lmx .ticker{background:var(--ob);overflow:hidden;border-top:1px solid rgba(201,168,76,.18);border-bottom:1px solid rgba(201,168,76,.18)}
+.lmx .ticker-track{display:flex;width:max-content;animation:tick 32s linear infinite}
+.lmx .ticker-track:hover{animation-play-state:paused}
+.lmx .ticker-track span{display:inline-block;font-family:var(--disp);font-weight:700;font-size:11px;
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:10px 0;white-space:nowrap}
+.lmx .ticker-track .sep{color:var(--gold);padding:10px 20px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* BUNDLES */
+.lmx .bundles{background:var(--ob);padding:84px 0}
+.lmx .bundles .head{text-align:center;margin-bottom:40px}
+.lmx .bundles h2.t{color:#fff}
+.lmx .bundles .sub{color:rgba(255,255,255,.6);margin:12px auto 0}
+.lmx .bgrid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.lmx .bcard{position:relative;border-radius:14px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;background:linear-gradient(135deg,#1A1A2E,#0D0D0D);border:1px solid rgba(201,168,76,.25)}
+.lmx .bcard.lose{background:linear-gradient(135deg,#2E1E10,#1c1209);border-color:rgba(139,106,58,.35)}
+.lmx .bcard .bimg{padding:26px;display:flex;justify-content:center}
+.lmx .bcard .bimg img{max-width:170px;width:100%;filter:drop-shadow(0 12px 24px rgba(0,0,0,.5))}
+.lmx .bcard .btxt{padding:26px 26px 26px 0}
+.lmx .bcard .tag{font-family:var(--body);font-weight:700;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.lmx .bcard.lose .tag{color:var(--tarn)}
+.lmx .bcard h3{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:26px;color:#fff;margin:8px 0 6px;line-height:1.02}
+.lmx .bcard p{font-size:13px;color:rgba(255,255,255,.66);margin-bottom:16px}
+.lmx .bcard .price{font-family:var(--disp);font-weight:800;color:#fff;font-size:20px;margin-bottom:14px}
+.lmx .bcard .price small{font-weight:500;font-size:12px;color:rgba(255,255,255,.5);text-decoration:line-through;margin-left:8px;font-family:var(--body)}
+
+/* GRID */
+.lmx .sec{padding:84px 0;background:var(--off)}
+.lmx .sec .wrap{max-width:1440px}
+.lmx .sechead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:18px;border-bottom:1px solid var(--hair);padding-bottom:22px}
+.lmx .pills{display:flex;gap:10px;flex-wrap:wrap}
+.lmx .pill{font-family:var(--body);font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  padding:9px 18px;border-radius:30px;border:1px solid var(--hair);color:var(--ink2);text-decoration:none;transition:.15s}
+.lmx .pill:hover{border-color:var(--ob);color:var(--ob)}
+.lmx .pill.on{background:var(--ob);color:#fff;border-color:var(--ob)}
+.lmx .lmgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px;margin-top:34px}
+.lmx .lmcard{background:#fff;min-width:0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:.2s;box-shadow:0 2px 8px rgba(13,13,13,.06)}
+.lmx .lmcard:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(13,13,13,.12)}
+.lmx .lmcard .ph{position:relative;aspect-ratio:1/1;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lmx .lmcard .ph img{width:84%;height:84%;object-fit:contain;transition:.25s}
+.lmx .lmcard:hover .ph img{transform:scale(1.04)}
+.lmx .badge{position:absolute;top:12px;left:12px;font-family:var(--disp);font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;font-size:10px;padding:4px 9px;border-radius:3px;background:var(--gold);color:var(--ob)}
+.lmx .badge.new{background:var(--red);color:#fff}
+.lmx .lmcard .meta{padding:16px 16px 20px;display:flex;flex-direction:column;flex:1}
+
+/* REPORT BADGE — category stamp system from the brief */
+.lmx .rpbadge{display:inline-flex;align-items:center;gap:5px;font-family:var(--disp);font-weight:800;
+  text-transform:uppercase;letter-spacing:.1em;font-size:9px;padding:3px 8px;border-radius:2px;margin-bottom:8px;width:fit-content}
+.lmx .rpbadge::before{content:"▶";font-size:5px}
+.lmx .rpbadge.champ{background:var(--gold);color:var(--ob)}
+.lmx .rpbadge.roast{background:var(--tarn);color:var(--cream)}
+.lmx .rpbadge.report{background:var(--red);color:#fff}
+.lmx .rpbadge.commish{background:var(--mid);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.lmx .rpbadge.league{background:#1a3a1a;color:#6FCF97;border:1px solid rgba(111,207,154,.25)}
+
+.lmx .lmcard .pt{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:19px;margin-bottom:4px;line-height:1.05}
+.lmx .lmcard .tagline{font-family:var(--body);font-style:italic;font-size:11.5px;color:var(--ink3);line-height:1.35;margin-bottom:10px;flex:1}
+.lmx .lmcard .pr{font-family:var(--disp);font-weight:800;font-size:22px;margin-top:auto}
+
+/* LEAGUE STARTER PACK */
+.lmx .starter{background:var(--mid);padding:84px 0}
+.lmx .starter .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:center}
+.lmx .starter .ey{color:rgba(201,168,76,.85)}
+.lmx .starter .rule{background:var(--gold)}
+.lmx .starter h2.t{color:#fff}
+.lmx .starter .sub{color:rgba(255,255,255,.62)}
+.lmx .starter-badge{display:inline-flex;align-items:center;gap:10px;
+  background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);
+  border-radius:6px;padding:10px 16px;margin:20px 0 28px}
+.lmx .starter-badge span{font-family:var(--body);font-size:11px;font-weight:700;
+  color:rgba(201,168,76,.9);letter-spacing:.08em;text-transform:uppercase}
+.lmx .starter-steps{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.lmx .step{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:18px}
+.lmx .step-n{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--gold);line-height:1}
+.lmx .step-t{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:13px;letter-spacing:.04em;color:#fff;margin:5px 0 3px}
+.lmx .step-d{font-size:11.5px;color:rgba(255,255,255,.45);line-height:1.4}
+.lmx .starter-cta{display:flex;gap:14px;flex-wrap:wrap}
+.lmx .starter-fig{display:flex;justify-content:center;align-items:center}
+.lmx .starter-fig img{max-width:380px;width:100%;filter:drop-shadow(0 28px 56px rgba(0,0,0,.55))}
+
+/* ROAST */
+.lmx .roast{background:var(--decay)}
+.lmx .roast .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:80px 40px}
+.lmx .roast .fig{display:flex;justify-content:center}
+.lmx .roast .fig img{max-width:340px;width:100%;height:auto;filter:drop-shadow(0 18px 36px rgba(0,0,0,.5))}
+.lmx .roast .ey{color:var(--tarn)}
+.lmx .roast .rule{background:var(--tarn)}
+.lmx .roast h2{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;font-size:42px;color:var(--cream);line-height:1.0}
+.lmx .roast p{color:rgba(245,240,232,.78);font-size:15px;margin:16px 0 26px;max-width:480px}
+
+/* NEWSLETTER */
+.lmx .nl{background:var(--ob)}
+.lmx .nl .wrap{padding:74px 40px;text-align:center}
+.lmx .nl h2{color:#fff}
+.lmx .nl p{color:rgba(255,255,255,.72);font-size:15px;margin:12px auto 24px;max-width:480px}
+.lmx .nl form{display:flex;gap:10px;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.lmx .nl input{flex:1;min-width:240px;padding:14px 18px;border-radius:6px;border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);color:#fff;font-family:var(--body);font-size:14px}
+.lmx .nl input::placeholder{color:rgba(255,255,255,.5)}
+
+@media(max-width:900px){
+  .lmx .hero .wrap,.lmx .roast .wrap,.lmx .bgrid,.lmx .starter .wrap{grid-template-columns:1fr}
+  .lmx .hero{text-align:center}.lmx .hero h1{font-size:52px}.lmx .hero .cta{justify-content:center}
+  .lmx .hero p,.lmx .hero-context{margin-left:auto;margin-right:auto}.lmx .hero .fig{order:-1}
+  .lmx .roast .fig{order:-1}
+  .lmx .lmgrid{grid-template-columns:repeat(2,1fr)}
+  .lmx .bcard{grid-template-columns:1fr;text-align:center}.lmx .bcard .btxt{padding:0 26px 28px}
+  .lmx .starter .wrap{gap:40px}.lmx .starter-fig{order:-1}
+  .lmx .starter-badge{margin-left:auto;margin-right:auto}
+  .lmx .rpbadge{margin-left:auto;margin-right:auto}
+}
+@media(max-width:520px){
+  .lmx .lmgrid{grid-template-columns:1fr}.lmx .hero h1{font-size:42px}.lmx h2.t{font-size:32px}.lmx .wrap{padding:0 22px}
+  .lmx .starter-steps{grid-template-columns:1fr}
+}
+</style>
+
+<div class="lmx">
+
+  <!-- HERO -->
+  <section class="hero bleed"><div class="wrap">
+    <div>
+      <div class="hero-context"><span class="dot"></span><span>Fantasy League Championship Drinkware</span></div>
+      <h1 style="margin-top:0">Win the League.<br>Own the<br><span class="g">Trophy Mug.</span></h1>
+      <span class="rule"></span>
+      <p>Custom mugs for champions, last-place legends, and everyone who made the group chat suffer all season. Personalized with your league name and year.</p>
+      <div class="cta">
+        <a class="btn btn-gold" href="/collections/champions">Shop Champions</a>
+        <a class="btn btn-out" href="/collections/the-sacko">Shop The Roast</a>
+      </div>
+    </div>
+    <div class="fig"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/crown-11oz-hr.png?v=1782625612" alt="Crown Champion fantasy football mug" width="520"></div>
+  </div></section>
+
+  <!-- TRUST -->
+  <section class="trust bleed"><div class="wrap">
+    <span>Made to order</span><span>Original designs</span><span>Dishwasher &amp; microwave safe</span><span>Personalized for your league</span><span>Free U.S. shipping over $50</span>
+  </div></section>
+
+  <!-- TICKER -->
+  <section class="ticker bleed">
+    <div class="ticker-track">
+      <span>Leagues Roasted</span><span class="sep">◆</span>
+      <span>Sacko Trophies Awarded</span><span class="sep">◆</span>
+      <span>Waiver Claims Documented</span><span class="sep">◆</span>
+      <span>Commish Labors Recognized</span><span class="sep">◆</span>
+      <span>Draft Disasters Immortalized</span><span class="sep">◆</span>
+      <span>Champions Who Won't Shut Up</span><span class="sep">◆</span>
+      <span>Trade Menaces Identified</span><span class="sep">◆</span>
+      <span>Group Chats Validated</span><span class="sep">◆</span>
+      <!-- duplicate for seamless loop -->
+      <span>Leagues Roasted</span><span class="sep">◆</span>
+      <span>Sacko Trophies Awarded</span><span class="sep">◆</span>
+      <span>Waiver Claims Documented</span><span class="sep">◆</span>
+      <span>Commish Labors Recognized</span><span class="sep">◆</span>
+      <span>Draft Disasters Immortalized</span><span class="sep">◆</span>
+      <span>Champions Who Won't Shut Up</span><span class="sep">◆</span>
+      <span>Trade Menaces Identified</span><span class="sep">◆</span>
+      <span>Group Chats Validated</span><span class="sep">◆</span>
+    </div>
+  </section>
+
+  <!-- BUNDLES -->
+  <section class="bundles bleed"><div class="wrap">
+    <div class="head">
+      <span class="ey">Bundle Up</span>
+      <span class="rule c"></span>
+      <h2 class="t">Outfit the Whole League</h2>
+      <p class="sub">One checkout, every manager. The bigger the order, the better the per-mug price.</p>
+    </div>
+    <div class="bgrid">
+      <a class="bcard" href="/collections/league-wide">
+        <div class="bimg"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/905_football_right.png?v=1782177592" alt="The League Pack"></div>
+        <div class="btxt">
+          <span class="tag">6+ Mugs · Best Value</span>
+          <h3>The League Pack</h3>
+          <p>A personalized mug for every team: champion, Sacko, and everyone between. Free shipping, always.</p>
+          <div class="price">From $109 <small>$119.94</small></div>
+          <span class="btn btn-gold">Shop The Pack</span>
+        </div>
+      </a>
+      <a class="bcard lose" href="/collections/league-wide">
+        <div class="bimg"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/rivalry-duo-1782756153.png?v=1782756166" alt="Champion and Sacko last-place mug duo" style="max-width:300px"></div>
+        <div class="btxt">
+          <span class="tag">2 Mugs · Winner + Loser</span>
+          <h3>The Rivalry Pack</h3>
+          <p>The champion gets their crown. The Sacko gets their receipt. The most fun you'll have all offseason.</p>
+          <div class="price">$34.99 <small>$39.98</small></div>
+          <span class="btn btn-tarn">Shop The Duo</span>
+        </div>
+      </a>
+    </div>
+  </div></section>
+
+  <!-- PRODUCT GRID -->
+  <section class="sec bleed"><div class="wrap">
+    <div class="sechead">
+      <div>
+        <span class="ey">The Collection</span>
+        <h2 class="t" style="margin-top:8px">Mugs Worth Winning For</h2>
+      </div>
+      <div class="pills">
+        <a class="pill on" href="/collections/all">All</a>
+        <a class="pill" href="/collections/champions">Champions</a>
+        <a class="pill" href="/collections/specialty-roles">Personality</a>
+        <a class="pill" href="/collections/the-sacko">The Roast</a>
+        <a class="pill" href="/collections/football">Sports</a>
+      </div>
+    </div>
+    <div class="lmgrid">
+
+      <a class="lmcard" href="/products/crown-champion-mug">
+        <div class="ph"><span class="badge">Bestseller</span><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/crown-11oz-hr.png?v=1782625612" alt="Crown Champion mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge champ">Champion</span>
+          <div class="pt">Crown Champion</div>
+          <div class="tagline">Your league. Your legacy.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/championship-ring-mug">
+        <div class="ph"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/012_football_right.png?v=1782177592" alt="Championship Ring mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge champ">Champion</span>
+          <div class="pt">Championship Ring</div>
+          <div class="tagline">If the title matters, the prize should too.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/waiver-wire-casino-mug">
+        <div class="ph"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/906_football_right.png?v=1782177594" alt="Waiver Wire Casino mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge report">Waiver Desk</span>
+          <div class="pt">Waiver Wire Casino</div>
+          <div class="tagline">Every league has a waiver goblin.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/the-g-o-a-t-champion-mug">
+        <div class="ph"><span class="badge new">New</span><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/goat_11hr_dc.png?v=1782620936" alt="The GOAT mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge champ">Champion</span>
+          <div class="pt">The G.O.A.T.</div>
+          <div class="tagline">For the champ who will not shut up.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/the-commish-mug">
+        <div class="ph"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/803_football_right.png?v=1782177595" alt="The Commish mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge commish">Commish HQ</span>
+          <div class="pt">The Commish</div>
+          <div class="tagline">For the person keeping ten grown adults organized.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/last-place-toilet-bowl-sacko-mug">
+        <div class="ph"><span class="badge new">New</span><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/501_football_right.png?v=1782177593" alt="Toilet Bowl Sacko mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge roast">Dead Last</span>
+          <div class="pt">Toilet Bowl Sacko</div>
+          <div class="tagline">Dead last, forever documented.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/trade-menace-mug">
+        <div class="ph"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/610_football_right.png?v=1782177594" alt="Trade Menace mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge report">Trade Desk</span>
+          <div class="pt">Trade Menace</div>
+          <div class="tagline">Trade menace behavior. Documented.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+      <a class="lmcard" href="/products/league-trophy-club-mug">
+        <div class="ph"><span class="badge">Bestseller</span><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/905_football_right.png?v=1782177592" alt="League Trophy Club mug" width="500" height="500"></div>
+        <div class="meta">
+          <span class="rpbadge league">League Pack</span>
+          <div class="pt">League Trophy Club</div>
+          <div class="tagline">Turn the group chat into a league tradition.</div>
+          <div class="pr">$19.99</div>
+        </div>
+      </a>
+
+    </div>
+  </div></section>
+
+  <!-- LEAGUE STARTER PACK -->
+  <section class="starter bleed"><div class="wrap">
+    <div>
+      <span class="ey">League Starter Pack</span>
+      <span class="rule"></span>
+      <h2 class="t">Build a Mug Set for the Whole League</h2>
+      <p class="sub">Send us your league name and theme. We create 3 custom design options, include up to 3 revision rounds, and produce a minimum set of 8 mugs for your league.</p>
+      <div class="starter-badge">
+        <span>8 Mug Minimum &nbsp;·&nbsp; 3 Design Options &nbsp;·&nbsp; 3 Revision Rounds</span>
+      </div>
+      <div class="starter-steps">
+        <div class="step">
+          <div class="step-n">01</div>
+          <div class="step-t">Tell Us Your League</div>
+          <div class="step-d">Name, theme, sport, year, inside jokes</div>
+        </div>
+        <div class="step">
+          <div class="step-n">02</div>
+          <div class="step-t">Get 3 Custom Designs</div>
+          <div class="step-d">Built around your league identity</div>
+        </div>
+        <div class="step">
+          <div class="step-n">03</div>
+          <div class="step-t">3 Revision Rounds</div>
+          <div class="step-d">Until it feels exactly like yours</div>
+        </div>
+        <div class="step">
+          <div class="step-n">04</div>
+          <div class="step-t">Mugs for Everyone</div>
+          <div class="step-d">Every manager gets their mug</div>
+        </div>
+      </div>
+      <div class="starter-cta">
+        <a class="btn btn-gold" href="#newsletter">Join the Waitlist</a>
+        <a class="btn btn-out" href="/pages/contact">Tell Us About Your League</a>
+      </div>
+    </div>
+    <div class="starter-fig">
+      <img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/905_football_right.png?v=1782177592" alt="Custom league mug pack">
+    </div>
+  </div></section>
+
+  <!-- ROAST -->
+  <section class="roast bleed"><div class="wrap">
+    <div class="fig"><img src="https://cdn.shopify.com/s/files/1/0999/3974/6156/files/501_football_right.png?v=1782177593" alt="Last Place Toilet Bowl Sacko mug"></div>
+    <div>
+      <span class="ey">The Roast · Anti-Trophy</span>
+      <h2>Last Place Deserves a Monument Too.</h2>
+      <span class="rule"></span>
+      <p>The Sacko, the Toilet Bowl, the Participation Trophy: tarnished-bronze designs built to remind your league's worst manager of exactly where they finished. No gold here. Gold is for winners.</p>
+      <a class="btn btn-tarn" href="/collections/the-sacko">Shop The Roast</a>
+    </div>
+  </div></section>
+
+  <!-- NEWSLETTER -->
+  <section class="nl bleed" id="newsletter"><div class="wrap">
+    <span class="ey">Draft Season Alerts</span><span class="rule c"></span>
+    <h2 class="t">Get $5 Off Your First Mug</h2>
+    <p>New designs every season, plus early access before your draft. No spam, just trophies and trash talk.</p>
+    {% form 'customer' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="email" name="contact[email]" placeholder="you@league.com" required>
+      <button type="submit" class="btn btn-gold">Join</button>
+    {% endform %}
+  </div></section>
+
+</div>
+
+{% schema %}
+{
+  "name": "LeagueMugs Home",
+  "settings": [],
+  "presets": [{ "name": "LeagueMugs Home" }]
+}
+{% endschema %}
