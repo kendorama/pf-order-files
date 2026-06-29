@@ -1,0 +1,167 @@
+{% comment %}lm-collection.liquid — LeagueMugs Collection Page (compact grid + sort + numbered pagination){% endcomment %}
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+.lm-coll{
+  --ground:#FAFAFA;--surface:#FFFFFF;--cream:#F5F0E8;--text:#18181B;--muted:#71717A;--dim:#A1A1AA;
+  --gold:#C9A84C;--gold-lt:#D8B85A;--gold-fill:rgba(201,168,76,.08);--gold-border:rgba(201,168,76,.35);
+  --border:#E4E4E7;--border-md:#D4D4D8;--radius:3px;
+  background:var(--ground);font-family:"Inter",-apple-system,system-ui,sans-serif;color:var(--text);
+}
+.lm-coll *{box-sizing:border-box;margin:0}
+.lm-coll-wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+
+/* HEADER */
+.lm-coll-hd{padding:48px 0 26px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.lm-coll-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.lm-coll-eyebrow-bar{display:block;width:3px;height:11px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.lm-coll-title{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:52px;line-height:.9;letter-spacing:.02em;text-transform:uppercase;color:var(--text);margin:0}
+.lm-coll-desc{font-size:15px;color:var(--muted);line-height:1.65;max-width:540px;margin:12px 0 0}
+.lm-coll-count{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:44px;line-height:1;letter-spacing:.03em;color:var(--dim);text-align:right;flex-shrink:0}
+.lm-coll-count small{display:block;font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--dim);margin-top:2px}
+
+/* TOOLBAR */
+.lm-coll-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:16px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.lm-coll-showing{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lm-coll-sort{display:inline-flex;align-items:center;gap:10px}
+.lm-coll-sort label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lm-coll-sort select{font-family:"Inter",sans-serif;font-size:13px;font-weight:600;color:var(--text);
+  background:var(--surface);border:1.5px solid var(--border-md);border-radius:var(--radius);padding:9px 34px 9px 14px;cursor:pointer;
+  appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C9A84C' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 12px center;transition:border-color .18s}
+.lm-coll-sort select:hover,.lm-coll-sort select:focus{border-color:var(--gold);outline:none}
+
+/* GRID */
+.lm-coll-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;list-style:none;margin:32px 0 0;padding:0}
+.lm-coll-card{background:var(--surface);min-width:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s;
+  box-shadow:0 2px 8px rgba(13,13,13,.05)}
+.lm-coll-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(13,13,13,.12);border-color:var(--gold-border)}
+.lm-coll-img-box{position:relative;aspect-ratio:1/1;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 68% 60% at 50% 52%,rgba(201,168,76,.07) 0%,transparent 68%),var(--cream)}
+.lm-coll-img{width:80%;height:80%;object-fit:contain;display:block;transition:transform .35s cubic-bezier(.22,.8,.35,1)}
+.lm-coll-card:hover .lm-coll-img{transform:scale(1.05)}
+.lm-coll-badge{position:absolute;top:11px;left:11px;font-family:"Barlow Condensed",sans-serif;font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;font-size:10px;padding:4px 9px;border-radius:3px;background:var(--gold);color:#0D0D0D;z-index:2}
+.lm-coll-body{padding:15px 16px 18px;border-top:1px solid var(--border);flex:1;display:flex;flex-direction:column;transition:border-color .2s}
+.lm-coll-card:hover .lm-coll-body{border-color:var(--gold-border)}
+.lm-coll-cat{font-family:"Inter",sans-serif;font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.lm-coll-name{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:700;font-size:18px;line-height:1.05;letter-spacing:.03em;text-transform:uppercase;color:var(--text);margin:6px 0 9px;transition:color .18s}
+.lm-coll-card:hover .lm-coll-name{color:var(--gold-lt)}
+.lm-coll-price{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:20px;color:var(--text)}
+.lm-coll-price small{font-family:"Inter",sans-serif;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.04em;margin-right:4px;text-transform:uppercase}
+
+/* PAGINATION */
+.lm-coll-pg{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:44px 0 8px}
+.lm-coll-pg a,.lm-coll-pg span{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;padding:0 8px;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:16px;letter-spacing:.04em;border-radius:var(--radius);text-decoration:none;transition:.16s}
+.lm-coll-pg a{color:var(--text);border:1.5px solid var(--border-md);background:var(--surface)}
+.lm-coll-pg a:hover{border-color:var(--gold);background:var(--gold-fill);color:var(--gold-lt)}
+.lm-coll-pg .cur{background:#0D0D0D;color:var(--gold);border:1.5px solid #0D0D0D}
+.lm-coll-pg .gap{border:0;background:none;color:var(--dim);min-width:24px}
+.lm-coll-pg .arw{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:0 16px}
+
+/* EMPTY */
+.lm-coll-empty{padding:80px 0;text-align:center}
+.lm-coll-empty-title{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:32px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.lm-coll-empty-msg{font-size:14px;color:var(--dim)}
+
+@media(max-width:1100px){.lm-coll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){
+  .lm-coll-wrap{padding:0 22px}
+  .lm-coll-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .lm-coll-hd{padding:34px 0 22px}.lm-coll-title{font-size:40px}.lm-coll-count{display:none}
+}
+@media(max-width:430px){.lm-coll-title{font-size:34px}.lm-coll-bar{justify-content:center}}
+@media(prefers-reduced-motion:reduce){.lm-coll *,.lm-coll *::before,.lm-coll *::after{transition:none!important}}
+</style>
+
+<div class="lm-coll">
+  <div class="lm-coll-wrap">
+
+    <header class="lm-coll-hd">
+      <div>
+        <div class="lm-coll-eyebrow"><i class="lm-coll-eyebrow-bar" aria-hidden="true"></i>League Mugs</div>
+        <h1 class="lm-coll-title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}<p class="lm-coll-desc">{{ collection.description }}</p>{%- endif -%}
+      </div>
+      {%- if collection.products_count > 0 -%}
+        <div class="lm-coll-count" aria-hidden="true">{{ collection.products_count }}<small>Design{{ collection.products_count | pluralize: '', 's' }}</small></div>
+      {%- endif -%}
+    </header>
+
+    {%- if collection.products_count == 0 -%}
+      <div class="lm-coll-empty">
+        <p class="lm-coll-empty-title">No mugs here yet</p>
+        <p class="lm-coll-empty-msg">Check back soon — new designs drop every season.</p>
+      </div>
+    {%- else -%}
+      {%- paginate collection.products by 24 -%}
+
+      <div class="lm-coll-bar">
+        <span class="lm-coll-showing">
+          Showing {{ paginate.current_offset | plus: 1 }}&ndash;{{ paginate.current_offset | plus: paginate.page_size | at_most: paginate.items }} of {{ paginate.items }}
+        </span>
+        {%- if collection.sort_options.size > 0 -%}
+          <form class="lm-coll-sort" method="get">
+            {%- for f in collection.filters -%}{%- for v in f.active_values -%}<input type="hidden" name="{{ v.param_name }}" value="{{ v.value }}">{%- endfor -%}{%- endfor -%}
+            <label for="lm-sort">Sort</label>
+            <select id="lm-sort" name="sort_by" onchange="this.form.submit()">
+              {%- assign cur_sort = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for opt in collection.sort_options -%}
+                <option value="{{ opt.value }}"{% if opt.value == cur_sort %} selected{% endif %}>{{ opt.name }}</option>
+              {%- endfor -%}
+            </select>
+          </form>
+        {%- endif -%}
+      </div>
+
+      <ul class="lm-coll-grid">
+        {%- for product in collection.products -%}
+          <li>
+            <a class="lm-coll-card" href="{{ product.url | within: collection }}" aria-label="{{ product.title | escape }}">
+              <div class="lm-coll-img-box">
+                {%- if product.metafields.custom.category != blank -%}<span class="lm-coll-badge">{{ product.metafields.custom.category }}</span>{%- endif -%}
+                <img class="lm-coll-img" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="{% if forloop.index <= 8 %}eager{% else %}lazy{% endif %}" width="600" height="600">
+              </div>
+              <div class="lm-coll-body">
+                <div class="lm-coll-cat">{{ product.type | default: 'Fantasy Mug' }}</div>
+                <div class="lm-coll-name">{{ product.title | remove: ' Mug' }}</div>
+                <div class="lm-coll-price">{%- if product.price_varies -%}<small>From</small>{%- endif -%}{{ product.price_min | money }}</div>
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="lm-coll-pg" aria-label="Pagination">
+          {%- if paginate.previous -%}<a class="arw" href="{{ paginate.previous.url }}" rel="prev">&lsaquo; Prev</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              {%- if part.title == paginate.current_page -%}<span class="cur">{{ part.title }}</span>
+              {%- else -%}<span class="gap">{{ part.title }}</span>{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a class="arw" href="{{ paginate.next.url }}" rel="next">Next &rsaquo;</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+
+      {%- endpaginate -%}
+    {%- endif -%}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "LM Collection",
+  "tag": "section",
+  "class": "lm-collection-section",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [],
+  "presets": [{ "name": "LM Collection", "category": "Collection" }]
+}
+{% endschema %}
