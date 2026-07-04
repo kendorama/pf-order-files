@@ -1,0 +1,398 @@
+{%- comment -%} LeagueMugs — Rivalry Pack builder. Pick 1 champion + 1 Sacko, add both in one click. The live "Rivalry Pack" BXGY discount auto-applies -$5 in cart. Self-contained. {%- endcomment -%}
+{%- assign champ_coll = collections['champions'] -%}
+{%- assign loser_coll = collections['the-sacko'] -%}
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+.lmrp{--ob:#0D0D10;--gold:#C9A84C;--goldh:#D8B85A;--cream:#F5F0E8;--mid:#1A1A2E;--tarn:#8B6A3A;
+  --ink:#18181B;--ink3:#71717A;--hair:#E4E4E7;--surface:#131318;--surface2:#1A1A22;--border:rgba(255,255,255,.09);
+  --disp:"Barlow Condensed",Impact,sans-serif;--body:"Inter",-apple-system,system-ui,sans-serif;}
+.lmrp *{box-sizing:border-box;margin:0}
+.lmrp{font-family:var(--body);color:var(--cream);background:var(--ob);line-height:1.6;padding-bottom:130px}
+.lmrp .wrap{max-width:1240px;margin:0 auto;padding:0 40px}
+.lmrp .ey{font-family:var(--body);font-weight:700;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.lmrp .rule{display:block;width:56px;height:2px;background:var(--gold);border:0;margin:14px auto 18px}
+
+/* HERO */
+.lmrp-hero{background:linear-gradient(155deg,#1A1A2E 0%,#141425 45%,#0D0D10 100%);text-align:center;padding:64px 40px 48px}
+.lmrp-hero h1{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:.98;font-size:56px;color:#fff}
+.lmrp-hero h1 .g{color:var(--gold)}
+.lmrp-hero p{font-size:16px;color:rgba(255,255,255,.72);max-width:560px;margin:14px auto 0}
+.lmrp-steps{display:flex;justify-content:center;flex-wrap:wrap;gap:12px 28px;margin-top:28px}
+.lmrp-step{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.lmrp-step b{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:var(--ob);font-size:13px;font-weight:800}
+.lmrp-save{display:inline-block;margin-top:22px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:6px;padding:8px 18px;font-family:var(--disp);font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:14px;color:var(--gold)}
+
+/* BUILDER */
+.lmrp-build{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)}
+.lmrp-col{padding:34px 40px 40px}
+.lmrp-col.win{background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(201,168,76,.08),transparent 70%),var(--ob)}
+.lmrp-col.lose{background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(139,106,58,.1),transparent 70%),#120d08;border-left:1px solid var(--border)}
+.lmrp-colhead{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.lmrp-num{font-family:var(--disp);font-weight:800;font-size:34px;line-height:1;color:var(--gold)}
+.lmrp-col.lose .lmrp-num{color:var(--tarn)}
+.lmrp-colhead h2{font-family:var(--disp);font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:26px;color:#fff}
+.lmrp-colsub{font-size:13px;color:var(--ink3);margin-bottom:20px}
+
+/* size toggle */
+.lmrp-sizes{display:flex;gap:8px;margin-bottom:20px}
+.lmrp-sz{flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:4px;color:rgba(255,255,255,.65);
+  font-family:inherit;cursor:pointer;padding:10px;text-align:center;transition:.15s;line-height:1.2}
+.lmrp-sz .o{font-family:var(--disp);font-weight:800;font-size:20px;display:block;color:#fff}
+.lmrp-sz .u{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.75}
+.lmrp-sz.on{border-color:var(--gold);background:rgba(201,168,76,.12)}
+.lmrp-col.lose .lmrp-sz.on{border-color:var(--tarn);background:rgba(139,106,58,.16)}
+
+/* card grid */
+.lmrp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:440px;overflow-y:auto;padding:4px;
+  scrollbar-width:thin;scrollbar-color:var(--surface2) transparent}
+.lmrp-grid::-webkit-scrollbar{width:6px}
+.lmrp-grid::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:6px}
+.lmrp-card{position:relative;background:var(--surface);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;
+  padding:0;overflow:hidden;transition:.16s;text-align:center;font-family:inherit;color:inherit}
+.lmrp-card:hover{border-color:rgba(255,255,255,.28);transform:translateY(-2px)}
+.lmrp-card.on{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.lmrp-col.lose .lmrp-card.on{border-color:var(--tarn);box-shadow:0 0 0 1px var(--tarn)}
+.lmrp-card-img{aspect-ratio:1/1;background:var(--cream);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.lmrp-card-img img{width:86%;height:86%;object-fit:contain}
+.lmrp-card-name{font-family:var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:12px;
+  line-height:1.1;color:#fff;padding:8px 6px 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.4em}
+.lmrp-check{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:var(--ob);
+  font-size:12px;font-weight:800;display:none;align-items:center;justify-content:center}
+.lmrp-col.lose .lmrp-check{background:var(--tarn);color:#fff}
+.lmrp-card.on .lmrp-check{display:flex}
+.lmrp-empty{grid-column:1/-1;padding:30px;text-align:center;color:var(--ink3);font-size:13px}
+
+/* personalize */
+.lmrp-pers{margin-top:18px;border:1px solid var(--border);border-radius:6px;padding:14px}
+.lmrp-pers-t{font-family:var(--disp);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:rgba(255,255,255,.7);margin-bottom:10px}
+.lmrp-pers-row{display:grid;grid-template-columns:1fr 84px;gap:9px}
+.lmrp-in{background:var(--surface2);border:1.5px solid var(--border);border-radius:4px;color:#fff;font-family:inherit;font-size:13px;padding:9px 11px;width:100%;outline:none;transition:.15s}
+.lmrp-in:focus{border-color:var(--gold)}
+.lmrp-in::placeholder{color:#55556a}
+
+/* summary bar */
+.lmrp-bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(13,13,16,.96);backdrop-filter:blur(8px);
+  border-top:1px solid var(--gold-border,rgba(201,168,76,.3));box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.lmrp-bar-in{max-width:1240px;margin:0 auto;padding:14px 40px;display:flex;align-items:center;gap:20px}
+.lmrp-mini{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.lmrp-slot{display:flex;align-items:center;gap:9px;min-width:0}
+.lmrp-slot .thumb{width:46px;height:46px;border-radius:6px;background:var(--cream);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--border)}
+.lmrp-slot .thumb img{width:88%;height:88%;object-fit:contain}
+.lmrp-slot .thumb.empty{background:var(--surface2);border:1px dashed rgba(255,255,255,.18)}
+.lmrp-slot .lab{min-width:0}
+.lmrp-slot .lab .k{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+.lmrp-slot .lab .v{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
+.lmrp-plus{color:var(--tarn);font-size:20px;font-weight:800}
+.lmrp-price{text-align:right;flex-shrink:0}
+.lmrp-price .tot{font-family:var(--disp);font-weight:800;font-size:26px;color:#fff;line-height:1}
+.lmrp-price .was{font-size:12px;color:var(--ink3);text-decoration:line-through;margin-left:8px}
+.lmrp-price .sv{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-top:3px}
+.lmrp-atc{flex-shrink:0;background:var(--gold);color:var(--ob);border:none;border-radius:5px;cursor:pointer;
+  font-family:var(--disp);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:17px;padding:16px 30px;transition:.16s;white-space:nowrap}
+.lmrp-atc:hover:not(:disabled){background:var(--goldh);transform:translateY(-1px)}
+.lmrp-atc:disabled{opacity:.45;cursor:not-allowed}
+.lmrp-atc.ok{background:#2D7D46;color:#fff}
+
+@media(max-width:900px){
+  .lmrp-hero h1{font-size:42px}
+  .lmrp-build{grid-template-columns:1fr}
+  .lmrp-col.lose{border-left:0;border-top:1px solid var(--border)}
+  .lmrp-bar-in{flex-wrap:wrap;padding:12px 20px;gap:12px}
+  .lmrp-mini{order:1;flex:1 1 100%}
+  .lmrp-price{order:2}
+  .lmrp-atc{order:3;flex:1}
+  .lmrp .wrap,.lmrp-col{padding-left:20px;padding-right:20px}
+}
+@media(max-width:520px){
+  .lmrp-hero h1{font-size:34px}
+  .lmrp-grid{grid-template-columns:repeat(2,1fr)}
+  .lmrp-slot .lab .v{max-width:100px}
+  .lmrp-price .tot{font-size:21px}
+  .lmrp-atc{font-size:15px;padding:14px 18px}
+}
+</style>
+
+<div class="lmrp" id="lmrp">
+
+  <section class="lmrp-hero">
+    <span class="ey">2 Mugs · Winner + Loser</span>
+    <h1>The <span class="g">Rivalry</span> Pack</h1>
+    <p>The champion gets their crown. The Sacko gets their receipt. Build the pairing your league will never let either of them forget.</p>
+    <div class="lmrp-steps">
+      <span class="lmrp-step"><b>1</b> Pick your champion</span>
+      <span class="lmrp-step"><b>2</b> Pick your Sacko</span>
+      <span class="lmrp-step"><b>3</b> Save $5 at checkout</span>
+    </div>
+    <div class="lmrp-save">Buy a champion + a Sacko together and save $5 — applied automatically</div>
+  </section>
+
+  <div class="lmrp-build">
+
+    <!-- CHAMPION -->
+    <section class="lmrp-col win">
+      <div class="lmrp-colhead"><span class="lmrp-num">1</span><h2>Crown the Champion</h2></div>
+      <p class="lmrp-colsub">The gold one. For the manager who will not stop talking about it.</p>
+      <div class="lmrp-sizes" data-side="win" role="radiogroup" aria-label="Champion size">
+        <button type="button" class="lmrp-sz on" data-size="11"><span class="o">11</span><span class="u">oz</span></button>
+        <button type="button" class="lmrp-sz" data-size="15"><span class="o">15</span><span class="u">oz · Big League</span></button>
+      </div>
+      <div class="lmrp-grid" data-side="win">
+        {%- if champ_coll and champ_coll.products.size > 0 -%}
+          {%- for p in champ_coll.products -%}
+            {%- assign v11 = '' -%}{%- assign v15 = '' -%}{%- assign pr11 = 0 -%}{%- assign pr15 = 0 -%}{%- assign img11 = blank -%}{%- assign img15 = blank -%}
+            {%- for v in p.variants -%}
+              {%- if v.title contains '11' -%}{%- assign v11 = v.id -%}{%- assign pr11 = v.price -%}{%- if v.image != blank -%}{%- assign img11 = v.image -%}{%- endif -%}{%- endif -%}
+              {%- if v.title contains '15' -%}{%- assign v15 = v.id -%}{%- assign pr15 = v.price -%}{%- if v.image != blank -%}{%- assign img15 = v.image -%}{%- endif -%}{%- endif -%}
+            {%- endfor -%}
+            {%- if img11 == blank -%}{%- assign img11 = p.featured_image -%}{%- endif -%}
+            {%- if img15 == blank -%}{%- assign img15 = p.featured_image -%}{%- endif -%}
+            {%- assign nm = p.title | remove: ' Mug' | remove: ' Champion' -%}
+            <button type="button" class="lmrp-card" data-side="win"
+              data-v11="{{ v11 }}" data-v15="{{ v15 }}" data-pr11="{{ pr11 }}" data-pr15="{{ pr15 }}"
+              data-img11="{{ img11 | image_url: width: 200 }}" data-img15="{{ img15 | image_url: width: 200 }}"
+              data-name="{{ nm | escape }}" data-img="{{ img11 | image_url: width: 200 }}"
+              aria-label="Select {{ nm | escape }}">
+              <span class="lmrp-check" aria-hidden="true">✓</span>
+              <span class="lmrp-card-img"><img src="{{ img11 | image_url: width: 200 }}" alt="{{ p.title | escape }}" loading="lazy"></span>
+              <span class="lmrp-card-name">{{ nm }}</span>
+            </button>
+          {%- endfor -%}
+        {%- else -%}
+          <p class="lmrp-empty">Champions are loading — visit the <a href="/collections/champions" style="color:var(--gold)">Champions collection</a>.</p>
+        {%- endif -%}
+      </div>
+      <div class="lmrp-pers">
+        <div class="lmrp-pers-t">🏆 Personalize (optional)</div>
+        <div class="lmrp-pers-row">
+          <input class="lmrp-in" type="text" id="lmrp-win-team" placeholder="League / team name" maxlength="25" autocomplete="off">
+          <input class="lmrp-in" type="text" id="lmrp-win-year" placeholder="Year" maxlength="4" inputmode="numeric" autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+    <!-- SACKO -->
+    <section class="lmrp-col lose">
+      <div class="lmrp-colhead"><span class="lmrp-num">2</span><h2>Name the Sacko</h2></div>
+      <p class="lmrp-colsub">Tarnished bronze. A permanent monument to finishing dead last.</p>
+      <div class="lmrp-sizes" data-side="lose" role="radiogroup" aria-label="Sacko size">
+        <button type="button" class="lmrp-sz on" data-size="11"><span class="o">11</span><span class="u">oz</span></button>
+        <button type="button" class="lmrp-sz" data-size="15"><span class="o">15</span><span class="u">oz · Big League</span></button>
+      </div>
+      <div class="lmrp-grid" data-side="lose">
+        {%- if loser_coll and loser_coll.products.size > 0 -%}
+          {%- for p in loser_coll.products -%}
+            {%- assign v11 = '' -%}{%- assign v15 = '' -%}{%- assign pr11 = 0 -%}{%- assign pr15 = 0 -%}{%- assign img11 = blank -%}{%- assign img15 = blank -%}
+            {%- for v in p.variants -%}
+              {%- if v.title contains '11' -%}{%- assign v11 = v.id -%}{%- assign pr11 = v.price -%}{%- if v.image != blank -%}{%- assign img11 = v.image -%}{%- endif -%}{%- endif -%}
+              {%- if v.title contains '15' -%}{%- assign v15 = v.id -%}{%- assign pr15 = v.price -%}{%- if v.image != blank -%}{%- assign img15 = v.image -%}{%- endif -%}{%- endif -%}
+            {%- endfor -%}
+            {%- if img11 == blank -%}{%- assign img11 = p.featured_image -%}{%- endif -%}
+            {%- if img15 == blank -%}{%- assign img15 = p.featured_image -%}{%- endif -%}
+            {%- assign nm = p.title | remove: ' Mug' -%}
+            <button type="button" class="lmrp-card" data-side="lose"
+              data-v11="{{ v11 }}" data-v15="{{ v15 }}" data-pr11="{{ pr11 }}" data-pr15="{{ pr15 }}"
+              data-img11="{{ img11 | image_url: width: 200 }}" data-img15="{{ img15 | image_url: width: 200 }}"
+              data-name="{{ nm | escape }}" data-img="{{ img11 | image_url: width: 200 }}"
+              aria-label="Select {{ nm | escape }}">
+              <span class="lmrp-check" aria-hidden="true">✓</span>
+              <span class="lmrp-card-img"><img src="{{ img11 | image_url: width: 200 }}" alt="{{ p.title | escape }}" loading="lazy"></span>
+              <span class="lmrp-card-name">{{ nm }}</span>
+            </button>
+          {%- endfor -%}
+        {%- else -%}
+          <p class="lmrp-empty">The Sacko lineup is loading — visit <a href="/collections/the-sacko" style="color:var(--tarn)">The Roast</a>.</p>
+        {%- endif -%}
+      </div>
+      <div class="lmrp-pers">
+        <div class="lmrp-pers-t">💀 Personalize (optional)</div>
+        <div class="lmrp-pers-row">
+          <input class="lmrp-in" type="text" id="lmrp-lose-team" placeholder="Loser's team name" maxlength="25" autocomplete="off">
+          <input class="lmrp-in" type="text" id="lmrp-lose-year" placeholder="Year" maxlength="4" inputmode="numeric" autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- STICKY SUMMARY -->
+  <div class="lmrp-bar">
+    <div class="lmrp-bar-in">
+      <div class="lmrp-mini">
+        <div class="lmrp-slot">
+          <span class="thumb empty" id="lmrp-th-win"></span>
+          <span class="lab"><span class="k">Champion</span><span class="v" id="lmrp-nm-win">Not picked</span></span>
+        </div>
+        <span class="lmrp-plus">+</span>
+        <div class="lmrp-slot">
+          <span class="thumb empty" id="lmrp-th-lose"></span>
+          <span class="lab"><span class="k">Sacko</span><span class="v" id="lmrp-nm-lose">Not picked</span></span>
+        </div>
+      </div>
+      <div class="lmrp-price">
+        <span class="tot" id="lmrp-tot">$39.98</span>
+        <span class="was" id="lmrp-was" style="display:none"></span>
+        <span class="sv" id="lmrp-sv" style="display:none">You save $5.00</span>
+      </div>
+      <button type="button" class="lmrp-atc" id="lmrp-atc" disabled>Pick Both Mugs</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('lmrp');
+  if (!root) return;
+  var DISCOUNT = 500; // cents, matches the "Rivalry Pack" BXGY (-$5)
+  var state = {
+    win:  { size: '11', card: null },
+    lose: { size: '11', card: null }
+  };
+
+  function money(c){ return '$' + (c/100).toFixed(2); }
+
+  function imgOf(card, size){
+    if (!card) return '';
+    return (size === '15' ? card.dataset.img15 : card.dataset.img11) || card.dataset.img;
+  }
+
+  function priceOf(side){
+    var c = state[side].card;
+    if (!c) return null;
+    return parseInt(state[side].size === '15' ? c.dataset.pr15 : c.dataset.pr11, 10);
+  }
+  function variantOf(side){
+    var c = state[side].card;
+    if (!c) return null;
+    return state[side].size === '15' ? c.dataset.v15 : c.dataset.v11;
+  }
+
+  // swap every card thumbnail on a side to the selected size's image
+  function swapCardImages(side){
+    var sz = state[side].size;
+    root.querySelectorAll('.lmrp-grid[data-side="' + side + '"] .lmrp-card').forEach(function(card){
+      var im = card.querySelector('.lmrp-card-img img');
+      if (im){ im.src = imgOf(card, sz); }
+    });
+  }
+
+  function renderSlot(side){
+    var c = state[side].card;
+    var nm = document.getElementById('lmrp-nm-' + side);
+    var th = document.getElementById('lmrp-th-' + side);
+    if (c){
+      nm.textContent = c.dataset.name;
+      th.className = 'thumb';
+      th.innerHTML = '<img src="' + imgOf(c, state[side].size) + '" alt="">';
+    } else {
+      nm.textContent = 'Not picked';
+      th.className = 'thumb empty';
+      th.innerHTML = '';
+    }
+  }
+
+  function refresh(){
+    renderSlot('win'); renderSlot('lose');
+    var pw = priceOf('win'), pl = priceOf('lose');
+    var totEl = document.getElementById('lmrp-tot');
+    var wasEl = document.getElementById('lmrp-was');
+    var svEl  = document.getElementById('lmrp-sv');
+    var atc   = document.getElementById('lmrp-atc');
+    var both = state.win.card && state.lose.card;
+    if (pw != null && pl != null){
+      var sub = pw + pl;
+      totEl.textContent = money(sub - DISCOUNT);
+      wasEl.textContent = money(sub); wasEl.style.display = '';
+      svEl.style.display = '';
+    } else {
+      var partial = (pw || 0) + (pl || 0);
+      totEl.textContent = partial ? money(partial) : '$39.98';
+      wasEl.style.display = 'none';
+      svEl.style.display = 'none';
+    }
+    if (atc.classList.contains('ok')) return;
+    atc.disabled = !both;
+    atc.textContent = both ? 'Add Rivalry Pack — Save $5' : (state.win.card ? 'Pick a Sacko' : 'Pick a Champion');
+  }
+
+  // size toggles
+  root.querySelectorAll('.lmrp-sizes').forEach(function(grp){
+    var side = grp.dataset.side;
+    grp.querySelectorAll('.lmrp-sz').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        grp.querySelectorAll('.lmrp-sz').forEach(function(b){ b.classList.remove('on'); });
+        this.classList.add('on');
+        state[side].size = this.dataset.size;
+        swapCardImages(side);
+        refresh();
+      });
+    });
+  });
+
+  // card selection
+  root.querySelectorAll('.lmrp-grid').forEach(function(grid){
+    var side = grid.dataset.side;
+    grid.querySelectorAll('.lmrp-card').forEach(function(card){
+      card.addEventListener('click', function(){
+        var already = state[side].card === card;
+        grid.querySelectorAll('.lmrp-card').forEach(function(c){ c.classList.remove('on'); c.setAttribute('aria-pressed','false'); });
+        if (already){ state[side].card = null; }
+        else { card.classList.add('on'); card.setAttribute('aria-pressed','true'); state[side].card = card; }
+        refresh();
+      });
+    });
+  });
+
+  // auto-select if only one option on a side (e.g. single Sacko)
+  ['win','lose'].forEach(function(side){
+    var cards = root.querySelectorAll('.lmrp-grid[data-side="' + side + '"] .lmrp-card');
+    if (cards.length === 1){ cards[0].classList.add('on'); cards[0].setAttribute('aria-pressed','true'); state[side].card = cards[0]; }
+  });
+
+  function clean(s){ return (s||'').replace(/[^\p{L}\p{N}\p{P}\p{Zs}]/gu,'').replace(/\s+/g,' ').trim(); }
+  function props(side){
+    var t = clean(document.getElementById('lmrp-' + side + '-team').value);
+    var y = (document.getElementById('lmrp-' + side + '-year').value||'').replace(/\D/g,'').slice(0,4);
+    var o = {};
+    if (t) o['Team Name'] = t;
+    if (y) o['Year'] = y;
+    return o;
+  }
+
+  document.getElementById('lmrp-atc').addEventListener('click', function(){
+    var atc = this;
+    var vw = variantOf('win'), vl = variantOf('lose');
+    if (!vw || !vl) return;
+    atc.disabled = true; atc.textContent = 'Adding…';
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({ items: [
+        { id: parseInt(vw,10), quantity: 1, properties: props('win') },
+        { id: parseInt(vl,10), quantity: 1, properties: props('lose') }
+      ]})
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d.status){
+        atc.textContent = d.description || 'Error, try again'; atc.disabled = false;
+        setTimeout(function(){ refresh(); }, 2500);
+      } else {
+        atc.classList.add('ok'); atc.textContent = '✓ Added — to cart';
+        window.location = '/cart';
+      }
+    }).catch(function(){
+      atc.textContent = 'Error, try again'; atc.disabled = false;
+      setTimeout(function(){ refresh(); }, 2500);
+    });
+  });
+
+  refresh();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "LM Rivalry Pack",
+  "settings": [],
+  "presets": [{ "name": "LM Rivalry Pack" }]
+}
+{% endschema %}
