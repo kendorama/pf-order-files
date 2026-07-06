@@ -1,0 +1,282 @@
+{% comment %}lm-collection.liquid — LeagueMugs Collection Page (compact grid + tag filters that span all pages){% endcomment %}
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+.lm-coll{
+  --ground:#FAFAFA;--surface:#FFFFFF;--cream:#F5F0E8;--text:#18181B;--muted:#71717A;--dim:#A1A1AA;
+  --gold:#C9A84C;--gold-lt:#D8B85A;--gold-fill:rgba(201,168,76,.08);--gold-border:rgba(201,168,76,.35);
+  --border:#E4E4E7;--border-md:#D4D4D8;--radius:3px;
+  background:var(--ground);font-family:"Inter",-apple-system,system-ui,sans-serif;color:var(--text);
+}
+.lm-coll *{box-sizing:border-box;margin:0}
+.lm-coll-wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+
+/* HEADER */
+.lm-coll-hd{padding:48px 0 26px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.lm-coll-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.lm-coll-eyebrow-bar{display:block;width:3px;height:11px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.lm-coll-title{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:52px;line-height:.9;letter-spacing:.02em;text-transform:uppercase;color:var(--text);margin:0}
+.lm-coll-desc{font-size:15px;color:var(--muted);line-height:1.65;max-width:540px;margin:12px 0 0}
+.lm-coll-count{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:44px;line-height:1;letter-spacing:.03em;color:var(--dim);text-align:right;flex-shrink:0}
+.lm-coll-count small{display:block;font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--dim);margin-top:2px}
+
+/* TOOLBAR + FILTERS */
+.lm-coll-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding:16px 0;border-top:1px solid var(--border)}
+.lm-coll-showing{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.lm-coll-fclear{font-family:"Inter",sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;transition:color .15s}
+.lm-coll-fclear:hover{color:var(--gold-lt)}
+.lm-coll-filters{display:flex;flex-wrap:wrap;gap:10px 22px;padding:0 0 18px;border-bottom:1px solid var(--border)}
+.lm-coll-filters:empty{display:none}
+.lm-fgroup{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.lm-fglabel{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.lm-chip{font-family:"Inter",sans-serif;font-size:12px;font-weight:600;letter-spacing:.03em;color:var(--text);background:var(--surface);border:1.5px solid var(--border-md);border-radius:30px;padding:7px 15px;cursor:pointer;transition:.15s}
+.lm-chip:hover{border-color:var(--gold)}
+.lm-chip.on{background:#0D0D0D;color:var(--gold);border-color:#0D0D0D}
+
+/* GRID */
+.lm-coll-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;list-style:none;margin:32px 0 0;padding:0}
+.lm-coll-grid > li{display:flex}
+.lm-coll-grid > li.lm-hidden{display:none}
+.lm-coll-noresults{padding:60px 0;text-align:center;color:var(--dim);font-size:14px;display:none}
+.lm-coll-noresults.show{display:block}
+.lm-coll-card{background:var(--surface);width:100%;min-width:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s;
+  box-shadow:0 2px 8px rgba(13,13,13,.05)}
+.lm-coll-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(13,13,13,.12);border-color:var(--gold-border)}
+.lm-coll-img-box{position:relative;aspect-ratio:1/1;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 68% 60% at 50% 52%,rgba(201,168,76,.07) 0%,transparent 68%),var(--cream)}
+.lm-coll-img{width:80%;height:80%;object-fit:contain;display:block;transition:transform .35s cubic-bezier(.22,.8,.35,1)}
+.lm-coll-card:hover .lm-coll-img{transform:scale(1.05)}
+.lm-coll-badge{position:absolute;top:11px;left:11px;font-family:"Barlow Condensed",sans-serif;font-weight:800;text-transform:uppercase;
+  letter-spacing:.06em;font-size:10px;padding:4px 9px;border-radius:3px;background:var(--gold);color:#0D0D0D;z-index:2}
+.lm-coll-body{padding:15px 16px 18px;border-top:1px solid var(--border);flex:1;display:flex;flex-direction:column;transition:border-color .2s}
+.lm-coll-card:hover .lm-coll-body{border-color:var(--gold-border)}
+.lm-coll-cat{font-family:"Inter",sans-serif;font-weight:600;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.lm-coll-name{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:700;font-size:18px;line-height:1.15;letter-spacing:.03em;text-transform:uppercase;color:var(--text);margin:6px 0 9px;transition:color .18s;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.3em}
+.lm-coll-card:hover .lm-coll-name{color:var(--gold-lt)}
+.lm-coll-price{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:20px;color:var(--text);margin-top:auto}
+.lm-coll-price small{font-family:"Inter",sans-serif;font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.04em;margin-right:4px;text-transform:uppercase}
+
+/* PAGINATION */
+.lm-coll-pg{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:44px 0 8px}
+.lm-coll-pg a,.lm-coll-pg span{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:42px;padding:0 8px;
+  font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:16px;letter-spacing:.04em;border-radius:var(--radius);text-decoration:none;transition:.16s}
+.lm-coll-pg a{color:var(--text);border:1.5px solid var(--border-md);background:var(--surface)}
+.lm-coll-pg a:hover{border-color:var(--gold);background:var(--gold-fill);color:var(--gold-lt)}
+.lm-coll-pg .cur{background:#0D0D0D;color:var(--gold);border:1.5px solid #0D0D0D}
+.lm-coll-pg .gap{border:0;background:none;color:var(--dim);min-width:24px}
+.lm-coll-pg .arw{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:0 16px}
+
+/* EMPTY */
+.lm-coll-empty{padding:80px 0;text-align:center}
+.lm-coll-empty-title{font-family:"Barlow Condensed",Impact,sans-serif;font-weight:800;font-size:32px;letter-spacing:.04em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.lm-coll-empty-msg{font-size:14px;color:var(--dim)}
+
+@media(max-width:1100px){.lm-coll-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){
+  .lm-coll-wrap{padding:0 22px}
+  .lm-coll-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .lm-coll-hd{padding:34px 0 22px}.lm-coll-title{font-size:40px}.lm-coll-count{display:none}
+}
+@media(max-width:430px){.lm-coll-title{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.lm-coll *,.lm-coll *::before,.lm-coll *::after{transition:none!important}}
+</style>
+
+<div class="lm-coll">
+  <div class="lm-coll-wrap">
+
+    <header class="lm-coll-hd">
+      <div>
+        <div class="lm-coll-eyebrow"><i class="lm-coll-eyebrow-bar" aria-hidden="true"></i>League Mugs</div>
+        <h1 class="lm-coll-title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}<p class="lm-coll-desc">{{ collection.description }}</p>{%- endif -%}
+      </div>
+      {%- if collection.products_count > 0 -%}
+        <div class="lm-coll-count" aria-hidden="true">{{ collection.products_count }}<small>Design{{ collection.products_count | pluralize: '', 's' }}</small></div>
+      {%- endif -%}
+    </header>
+
+    {%- if collection.products_count == 0 -%}
+      <div class="lm-coll-empty">
+        <p class="lm-coll-empty-title">No mugs here yet</p>
+        <p class="lm-coll-empty-msg">Check back soon — new designs drop every season.</p>
+      </div>
+    {%- else -%}
+      {%- paginate collection.products by 50 -%}
+
+      <div class="lm-coll-bar">
+        <span class="lm-coll-showing" id="lm-coll-showing">Showing {{ collection.products_count }} design{{ collection.products_count | pluralize: '', 's' }}</span>
+        <button type="button" class="lm-coll-fclear" id="lm-coll-fclear" hidden>Clear filters &#10005;</button>
+      </div>
+      <div class="lm-coll-filters" id="lm-coll-filters" aria-label="Filter designs"></div>
+
+      <ul class="lm-coll-grid" id="lm-coll-grid" data-pages="{{ paginate.pages }}" data-url="{{ collection.url }}">
+        {%- for product in collection.products -%}
+          {%- unless product.tags contains 'lm-hidden' -%}
+          <li data-tags="{{ product.tags | join: ' ' | downcase | escape }}">
+            <a class="lm-coll-card" href="{{ product.url | within: collection }}" aria-label="{{ product.title | escape }}">
+              <div class="lm-coll-img-box">
+                {%- if product.metafields.custom.category != blank -%}<span class="lm-coll-badge">{{ product.metafields.custom.category }}</span>{%- endif -%}
+                <img class="lm-coll-img" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="{% if forloop.index <= 8 %}eager{% else %}lazy{% endif %}" width="600" height="600">
+              </div>
+              <div class="lm-coll-body">
+                <div class="lm-coll-cat">{{ product.type | default: 'Fantasy Mug' }}</div>
+                <div class="lm-coll-name">{{ product.title | remove: ' Mug' }}</div>
+                <div class="lm-coll-price">{%- if product.price_varies -%}<small>From</small>{%- endif -%}{{ product.price_min | money }}</div>
+              </div>
+            </a>
+          </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+      <p class="lm-coll-noresults" id="lm-coll-noresults">No designs match those filters. <button type="button" class="lm-coll-fclear" style="display:inline" onclick="document.getElementById('lm-coll-fclear').click()">Clear filters</button></p>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="lm-coll-pg" id="lm-coll-pg" aria-label="Pagination">
+          {%- if paginate.previous -%}<a class="arw" href="{{ paginate.previous.url }}" rel="prev">&lsaquo; Prev</a>{%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              {%- if part.title == paginate.current_page -%}<span class="cur">{{ part.title }}</span>
+              {%- else -%}<span class="gap">{{ part.title }}</span>{%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}<a class="arw" href="{{ paginate.next.url }}" rel="next">Next &rsaquo;</a>{%- endif -%}
+        </nav>
+      {%- endif -%}
+
+      {%- endpaginate -%}
+    {%- endif -%}
+
+  </div>
+</div>
+
+<script>
+(function(){
+  var grid = document.getElementById('lm-coll-grid');
+  var fbar = document.getElementById('lm-coll-filters');
+  var showing = document.getElementById('lm-coll-showing');
+  var clearBtn = document.getElementById('lm-coll-fclear');
+  var noRes = document.getElementById('lm-coll-noresults');
+  if(!grid || !fbar) return;
+
+  var GROUPS = [
+    { g:'sport', label:'Sport', opts:[['fantasy-football','Football'],['fantasy-baseball','Baseball'],['fantasy-basketball','Basketball'],['fantasy-hockey','Hockey'],['fantasy-golf','Golf']] },
+    { g:'type', label:'Type', opts:[['champion','Champion'],['sacko','The Roast'],['specialty commissioner','Specialty'],['league-wide','League Pack']] },
+    { g:'perk', label:'', opts:[['personalized','Personalized']] }
+  ];
+  var items = [];
+
+  function anyPresent(tagStr){ return tagStr.split(' ').some(function(t){ return items.some(function(d){ return d.tags.indexOf(t) > -1; }); }); }
+
+  function apply(){
+    var active = {};
+    fbar.querySelectorAll('.lm-chip.on').forEach(function(c){
+      var g = c.getAttribute('data-g');
+      (active[g] = active[g] || []).push(c.getAttribute('data-tags').split(' '));
+    });
+    var groups = Object.keys(active);
+    var n = 0;
+    items.forEach(function(d){
+      var ok = groups.every(function(g){
+        return active[g].some(function(tags){ return tags.some(function(t){ return d.tags.indexOf(t) > -1; }); });
+      });
+      d.li.classList.toggle('lm-hidden', !ok); if(ok) n++;
+    });
+    if(showing) showing.textContent = 'Showing ' + n + ' design' + (n === 1 ? '' : 's');
+    if(clearBtn) clearBtn.hidden = groups.length === 0;
+    if(noRes) noRes.classList.toggle('show', n === 0);
+  }
+
+  function buildChips(){
+    fbar.innerHTML = '';
+    GROUPS.forEach(function(grp){
+      var avail = grp.opts.filter(function(o){ return anyPresent(o[0]); });
+      if(!avail.length) return;
+      if(grp.opts.length === 1){
+        var only = avail[0][0].split(' ');
+        if(items.every(function(d){ return only.some(function(t){ return d.tags.indexOf(t) > -1; }); })) return;
+      }
+      var wrap = document.createElement('div'); wrap.className = 'lm-fgroup';
+      if(grp.label){ var lbl = document.createElement('span'); lbl.className = 'lm-fglabel'; lbl.textContent = grp.label; wrap.appendChild(lbl); }
+      avail.forEach(function(o){
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'lm-chip'; b.textContent = o[1];
+        b.setAttribute('data-g', grp.g); b.setAttribute('data-tags', o[0]); b.setAttribute('aria-pressed','false');
+        b.addEventListener('click', function(){ var on = b.classList.toggle('on'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); apply(); });
+        wrap.appendChild(b);
+      });
+      fbar.appendChild(wrap);
+    });
+  }
+
+  function initFilter(){
+    items = [].slice.call(grid.children).map(function(li){
+      return { li: li, tags: (li.getAttribute('data-tags')||'').split(/\s+/).filter(Boolean) };
+    });
+    buildChips();
+    apply();
+  }
+
+  if(clearBtn) clearBtn.addEventListener('click', function(){
+    fbar.querySelectorAll('.lm-chip.on').forEach(function(c){ c.classList.remove('on'); c.setAttribute('aria-pressed','false'); });
+    apply();
+  });
+
+  // Filters must span the WHOLE collection, not just the current page.
+  var pages = parseInt(grid.getAttribute('data-pages') || '1', 10);
+  var baseUrl = grid.getAttribute('data-url') || location.pathname;
+  var previewParam = (location.search.match(/[?&](preview_theme_id=[^&]+)/) || ['',''])[1];
+  if(pages > 1){
+    var reqs = [];
+    for(var p = 2; p <= pages; p++){
+      var u = baseUrl + (baseUrl.indexOf('?') > -1 ? '&' : '?') + 'page=' + p + (previewParam ? ('&' + previewParam) : '');
+      reqs.push(fetch(u).then(function(r){ return r.text(); }).catch(function(){ return ''; }));
+    }
+    Promise.all(reqs).then(function(htmls){
+      htmls.forEach(function(html){
+        if(!html) return;
+        try{
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var g2 = doc.getElementById('lm-coll-grid');
+          if(g2){ [].slice.call(g2.children).forEach(function(li){ grid.appendChild(li); }); }
+        }catch(e){}
+      });
+      var pg = document.getElementById('lm-coll-pg'); if(pg) pg.style.display = 'none';
+      initFilter();
+    }).catch(initFilter);
+  } else {
+    initFilter();
+  }
+})();
+</script>
+
+{%- if collection.products_count > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": {{ collection.title | json }},
+  "numberOfItems": {{ collection.products_count }},
+  "itemListElement": [
+    {%- for product in collection.products limit: 50 -%}
+    {%- if product.tags contains 'lm-hidden' -%}{%- continue -%}{%- endif -%}
+    { "@type": "ListItem", "position": {{ forloop.index }}, "url": {{ request.origin | append: product.url | json }}, "name": {{ product.title | json }} }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "LM Collection",
+  "tag": "section",
+  "class": "lm-collection-section",
+  "enabled_on": { "templates": ["collection"] },
+  "settings": [],
+  "presets": [{ "name": "LM Collection", "category": "Collection" }]
+}
+{% endschema %}
